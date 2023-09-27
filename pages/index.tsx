@@ -1,11 +1,10 @@
 // import Image from "next/image";
-import { Inter } from "next/font/google";
+import { Baloo_Bhai_2 } from "next/font/google";
 import MainLayout from "@/components/MainLayout";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Baloo_Bhai_2({ subsets: ["latin"] });
 
 export default function Home({ email, result }: Data) {
-  console.log(email);
   return (
     <main
       className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
