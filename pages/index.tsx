@@ -135,7 +135,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
 
     let response = await fetch(
-      `http://localhost:3000/api/single-mail?email=${email}`,
+      `${process.env.BASE_URL}/api/single-mail?email=${email}`,
       {
         method: "GET",
         headers: headersList,
