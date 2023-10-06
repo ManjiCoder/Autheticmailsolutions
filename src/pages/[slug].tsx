@@ -1,28 +1,43 @@
 import { Inter } from 'next/font/google';
-import { Fragment } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { STATUSES, setData, setStatus } from '@/redux/features/emailSlice';
-import { emailSchema } from '@/lib/validation';
-import { Formik } from 'formik';
-
 import HeadSEO from '@/components/HeadSEO';
+import { Fragment, useEffect } from 'react';
+import { Formik } from 'formik';
+import { emailSchema } from '@/lib/validation';
 import ErrorMessage from '@/components/ErrorMessage';
-import { BASE_URL, options } from '@/utils';
+import { useRouter } from 'next/router';
+import { useSelector } from 'react-redux';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export default function Home() {
+  const router = useRouter();
   const { data } = useSelector((state: any) => state.email);
-  const dispatch = useDispatch();
   const appTitle = 'Authetic Mail Solution';
+  useEffect(() => {
+    console.log(router.query);
+  }, [router]);
 
   const validateEmail = async (email: string) => {
-    dispatch(setStatus(STATUSES.LOADING));
-    let url = BASE_URL + `/api/email/${email}`;
+    let url = `http://192.168.130.227:3000/api/email/${email}`;
+    let options = {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+      },
+    };
+
     let response = await fetch(url, options);
+
     let data = await response.json();
-    dispatch(setData(data));
-    dispatch(setStatus(STATUSES.IDLE));
+    console.log(data);
+    alert(data.result);
+    router.push(
+      {
+        pathname: `/${email}`,
+        query: data,
+      },
+      `/${email}`
+    );
   };
 
   return (
@@ -48,7 +63,7 @@ export default function Home() {
                 deliverability today with our AuthenticMailSolution
               </p>
             </div>
-            <div className="bg-gray-100 rounded-lg p-8 flex flex-col w-96 mt-10 md:mt-0">
+            <div className="bg-gray-100 rounded-lg p-8 flex flex-col w-80 mt-10 md:mt-0">
               <h2 className="text-gray-900 text-lg font-medium title-font mb-5">
                 Check Email For Free!
               </h2>
@@ -59,9 +74,9 @@ export default function Home() {
                 onSubmit={(values, { setSubmitting }) => {
                   validateEmail(values.email);
                   setTimeout(() => {
-                    // console.log(values);
+                    console.log(values);
                     setSubmitting(false);
-                  }, 300);
+                  }, 400);
                 }}
               >
                 {({
@@ -72,6 +87,7 @@ export default function Home() {
                   handleBlur,
                   handleSubmit,
                   isSubmitting,
+                  isValid,
                   /* and other goodies */
                 }) => (
                   <form onSubmit={handleSubmit}>
@@ -100,11 +116,11 @@ export default function Home() {
                     <button
                       disabled={isSubmitting}
                       type="submit"
-                      className="disabled:cursor-not-allowed text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-sm"
+                      className="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-sm"
                     >
                       Submit
                     </button>
-                    <p className="font-medium text-gray-700 mt-3">
+                    <p className="font-medium text-gray-500 mt-3">
                       {data?.result}
                     </p>
                   </form>
